@@ -181,8 +181,10 @@ def _sparefields(cf: List[str], sys: str, raw: str) -> List[str]:
     """
     numval = math.ceil(len(raw) / Lf)  # need this for irregularly defined files
 # %% patching for Spare entries, some receivers include, and some don't include...
-    if sys == 'G' and len(cf) == numval + 1:
-        cf = cf[:-1]
+    if sys == 'G':
+        if numval == 31 and len(cf) == numval - 2:
+            cf.insert(20, 'spare1')
+            cf.insert(29, 'spare2')
     elif sys == 'C' and len(cf) == numval - 1:
         cf.insert(20, 'spare')
     elif sys == 'E':
