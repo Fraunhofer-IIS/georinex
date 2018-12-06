@@ -145,6 +145,8 @@ def rinexnav3(fn: Path,
         if 'IRNA' in corr and 'IRNB' in corr:
             nav.attrs['ionospheric_corr_BDS'] = np.hstack((corr['IRNA'],
                                                            corr['IRNB']))
+    if 'LEAP SECONDS' in header:
+        nav.attrs['leap_seconds'] = int(header['LEAP SECONDS'])
 
     nav.attrs['version'] = header['version']
     nav.attrs['filename'] = fn.name
