@@ -27,8 +27,8 @@ def rinexnav3(fn: Path,
 
     The "eof" stuff is over detection of files that may or may not have a trailing newline at EOF.
     """
-
-    fn = Path(fn).expanduser()
+    if isinstance(fn, Path):
+        fn = Path(fn).expanduser()
 
     svs = []
     raws = []
@@ -149,7 +149,10 @@ def rinexnav3(fn: Path,
         nav.attrs['leap_seconds'] = int(header['LEAP SECONDS'])
 
     nav.attrs['version'] = header['version']
-    nav.attrs['filename'] = fn.name
+    if isinstance(fn, (str, Path)):
+        nav.attrs['filename'] = fn.name
+    else:
+        nav.attrs['filename'] = 'IOString'
     nav.attrs['svtype'] = svtypes
     nav.attrs['rinextype'] = 'nav'
 
@@ -279,6 +282,8 @@ def navheader3(f: TextIO) -> Dict[str, Any]:
         fn = f
         with fn.open('r') as f:
             return navheader3(f)
+    else:
+        f.seek(0)
 
     hdr = rinexinfo(f)
     assert int(hdr['version']) == 3, 'see rinexnav2() for RINEX 2.x files'

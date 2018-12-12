@@ -103,12 +103,14 @@ def rinexnav(fn: Path,
              group: str = 'NAV',
              tlim: Tuple[datetime, datetime] = None) -> xarray.Dataset:
     """ Read RINEX 2 or 3  NAV files"""
-    fn = Path(fn).expanduser()
-    if fn.suffix == '.nc':
-        try:
-            return xarray.open_dataset(fn, group=group, autoclose=True)
-        except OSError as e:
-            raise LookupError(f'Group {group} not found in {fn}    {e}')
+
+    if isinstance(fn, (str, Path)):
+        fn = Path(fn).expanduser()
+        if fn.suffix == '.nc':
+            try:
+                return xarray.open_dataset(fn, group=group, autoclose=True)
+            except OSError as e:
+                raise LookupError(f'Group {group} not found in {fn}    {e}')
 
     tlim = _tlim(tlim)
 
