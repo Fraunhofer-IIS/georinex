@@ -188,8 +188,8 @@ def _sparefields(cf: List[str], sys: str, raw: str) -> List[str]:
 # %% patching for Spare entries, some receivers include, and some don't include...
     if sys == 'G':
         if numval == 31 and len(cf) == numval - 2:
-            cf.insert(20, 'spare1')
-            cf.insert(29, 'spare2')
+            cf.insert(31, 'spare1')
+            cf.insert(30, 'spare2')
     elif sys == 'C' and len(cf) == numval - 1:
         cf.insert(20, 'spare')
     elif sys == 'E':
