@@ -91,12 +91,13 @@ def rinexnav3(fn: Path,
         logging.warning('no specified data found in {fn}')
         return None
 
+    dpl_sv = []
     for sv in svu:
         svi = np.array([i for i, s in enumerate(svs) if s == sv])
 
         tu, iu = np.unique(t[svi], return_index=True)
         if tu.size != t[svi].size:
-            logging.warning(f'duplicate times detected on SV {sv}, using first of duplicate times')
+            dpl_sv.append(sv)
             """ I have seen that the data rows match identically when times are duplicated"""
 
         cf = _sparefields(fields[sv[0]], sv[0], raws[svi[0]])
@@ -127,6 +128,10 @@ def rinexnav3(fn: Path,
 # %% patch SV names in case of "G 7" => "G07"
     nav = nav.assign_coords(sv=[s.replace(' ', '0') for s in nav.sv.values.tolist()])
 # %% other attributes
+
+    if dpl_sv:
+        dpl_sv_to_s = ', '.join(map(str, dpl_sv))
+        logging.warning(f'duplicate times detected on SVs: {dpl_sv_to_s} (using first of duplicate times)')
 
     # Add ionospheric correction coefficients if exist.
     if 'IONOSPHERIC CORR' in header:
